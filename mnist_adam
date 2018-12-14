@@ -1,0 +1,30 @@
+#This program has an accuracy of .988 with a loss of .037
+
+import tensorflow as tf
+
+#Load the mnist data using keras.
+#training = 60,000 grayscale hand written digits. 28X28 pixels, 
+#test = 10,000 images.
+mnist=tf.keras.datasets.mnist
+(x_train,y_train),(x_test,y_test)=mnist.load_data()
+
+#Data grayscale values are from 1 to 255.  Divide by 255.0 to create range of 0 to 1.
+x_train,x_test=x_train/255.0,x_test/255.0
+
+#Quick check of the size of the training and test data
+print("x_train length")
+print(len(x_train))
+print("y_test length")
+print(len(y_test))
+
+model=tf.keras.models.Sequential([tf.keras.layers.Flatten(),tf.keras.layers.Dense(512, activation=tf.nn.relu),tf.keras.layers.Dropout(0,2),tf.keras.layers.Dense(10,activation=tf.nn.softmax)])
+
+
+#Define the loss function - normally categorical cross entropy is used for one hot encoded targets
+#adam - adaptive moment estimation - better than stochastic gradiant descent
+model.compile(optimizer="adam",loss="sparse_categorical_crossentropy",metrics=["accuracy"])
+
+
+#epochs is number of iterations
+model.fit(x_train, y_train, epochs=4)
+model.evaluate(x_test, y_test)
